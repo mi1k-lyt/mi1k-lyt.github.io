@@ -15,6 +15,33 @@
     </entry>
     
     
+    
+    <entry>
+      <title>ImGui笔记</title>
+      <link href="/ImGui%E7%AC%94%E8%AE%B0/"/>
+      <url>/ImGui%E7%AC%94%E8%AE%B0/</url>
+      
+        <content type="html"><![CDATA[<p>​最近在写尝试写C++项目时，总是会难避开ImGui，所以</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Tools </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C++ </tag>
+            
+            <tag> UI库 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
   
   
 </search>
