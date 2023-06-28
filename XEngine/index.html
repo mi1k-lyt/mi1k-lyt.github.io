@@ -1,0 +1,350 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>游戏引擎从零开发(一) | mi1k Blog</title><meta name="author" content="YunTao Li"><meta name="copyright" content="YunTao Li"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="本系列记录了从零开始构造游戏引擎的过程，梳理整体知识点和框架。 主线参考为： 1、cherno的GameEngine系列：https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list&#x3D;PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT 2、游戏引擎架构第二版 3、Games104：现代游戏引擎  本系列开端以cherno的教程切入，因为该系列以code live的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="游戏引擎从零开发(一)">
+<meta property="og:url" content="http://mi1klyt.com/XEngine/index.html">
+<meta property="og:site_name" content="mi1k Blog">
+<meta property="og:description" content="本系列记录了从零开始构造游戏引擎的过程，梳理整体知识点和框架。 主线参考为： 1、cherno的GameEngine系列：https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list&#x3D;PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT 2、游戏引擎架构第二版 3、Games104：现代游戏引擎  本系列开端以cherno的教程切入，因为该系列以code live的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedengine.png">
+<meta property="article:published_time" content="2023-03-28T06:53:01.000Z">
+<meta property="article:modified_time" content="2023-06-28T12:05:46.750Z">
+<meta property="article:author" content="YunTao Li">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="游戏引擎">
+<meta property="article:tag" content="图形学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedengine.png"><link rel="shortcut icon" href="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedavatar.png"><link rel="canonical" href="http://mi1klyt.com/XEngine/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '游戏引擎从零开发(一)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-06-28 20:05:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedavatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedengine.png')"><nav id="nav"><span id="blog-info"><a href="/" title="mi1k Blog"><span class="site-name">mi1k Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">游戏引擎从零开发(一)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-03-28T06:53:01.000Z" title="发表于 2023-03-28 14:53:01">2023-03-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-28T12:05:46.750Z" title="更新于 2023-06-28 20:05:46">2023-06-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/">游戏引擎</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title="游戏引擎从零开发(一)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p> 本系列记录了从零开始构造游戏引擎的过程，梳理整体知识点和框架。</p>
+<p>主线参考为：</p>
+<p>1、cherno的GameEngine系列：<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT">https://www.youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT</a></p>
+<p>2、游戏引擎架构第二版</p>
+<p>3、Games104：现代游戏引擎</p>
+<p> 本系列开端以cherno的教程切入，因为该系列以code live的形式从头开始带着去讲解游戏引擎的内部程序架构，更重要的是在工程细节上有许多可以学习的地方，游戏引擎本质上作为一个大型的软件工程，工程上的细节处理我认为可能比大概的理论框架还要重要。在整体框架的扩展以及实验性功能，会参考另外两个资料。</p>
+<p> 另外笔者自身已经前置学习了DX12，希望可以借此机会，完成整体的渲染API的封装，过渡学习Vulkan(现代API互转我认为成本还可以)，并且希望进一步接触到传统API与现代API差异性封装。</p>
+<p>并且可以以此搭建自己的图形实验平台，可以让自己方便的去复现一些图形算法。</p>
+<h1 id="引擎的框架和定义"><a href="#引擎的框架和定义" class="headerlink" title="引擎的框架和定义"></a>引擎的框架和定义</h1><p>本文不会具体记录详细的代码过程，但会给出关键性的工程细节以及整体框架梳理和自身思考。</p>
+<h2 id="游戏引擎的定义"><a href="#游戏引擎的定义" class="headerlink" title="游戏引擎的定义"></a>游戏引擎的定义</h2><p>这里我认为Cherno的一句话很精髓，大致意思为：</p>
+<blockquote>
+<p>游戏引擎的核心就是，从硬盘读取数据，将这段数据通过处理，最后以另一种数据的形式展示出来(可能是视觉上渲染效果，物理效果或者音效等等)</p>
+</blockquote>
+<p>所以游戏引擎天然就是<strong>面向数据</strong>的，这很重要；Entity Component System是一种面向数据的设计，游戏引擎中通常会使用该架构去为了更好的实现对象设计和内存管理。</p>
+<p>从使用意义上来讲，游戏引擎也可以理解为是<strong>3D应用程序</strong>的<em>核心组件</em>或者<em>开发平台</em>。</p>
+<h2 id="设计游戏引擎的程序框架"><a href="#设计游戏引擎的程序框架" class="headerlink" title="设计游戏引擎的程序框架"></a>设计游戏引擎的程序框架</h2><p>cherno的教程构建了一个引擎最基础的框架，但在这里我还是想和游戏引擎架构中给出的运行时架构和GAMES104中的架构做对比。</p>
+<p>运行时架构：</p>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefined%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9E%B6%E6%9E%84.png" alt="运行时架构" style="zoom: 50%;" />
+
+<p>GAMES104：</p>
+<ul>
+<li>工具层（Tool Layer）</li>
+</ul>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628170550578.png" alt="image-20230628170550578" style="zoom:50%;" />
+
+<ul>
+<li>功能层（Function Layer）</li>
+</ul>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628170605994.png" alt="image-20230628170605994" style="zoom:50%;" />
+
+<ul>
+<li>资源层（Resource Layer）</li>
+</ul>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628170627277.png" alt="image-20230628170627277" style="zoom:50%;" />
+
+<ul>
+<li>核心层（Core Layer）</li>
+</ul>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628170646904.png" alt="image-20230628170646904" style="zoom:50%;" />
+
+<ul>
+<li>平台层（Platform Layer）</li>
+</ul>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628170714390.png" alt="image-20230628170714390" style="zoom:50%;" />
+
+<p>Cherno：</p>
+<ul>
+<li>Entyr Point（入口点）</li>
+<li>Application Layer（应用层）</li>
+<li>Window Layer（窗口层）</li>
+<li>RenderAPI Abstract（图形API抽象层）</li>
+<li>Debugging System（调试系统）</li>
+<li>Script Layer（脚本层）</li>
+<li>Memory System（内存管理系统）</li>
+<li>Entity-Component System（实例-组件系统）</li>
+<li>Physics（物理系统）</li>
+<li>File IO&amp;VFS（文件读写&amp;虚拟文件）</li>
+<li>Build System（资产构建系统）</li>
+</ul>
+<p>可以看出不同于书本和GAMES104的提出的整体框架，cherno给出的只是自己沿着写代码的思路给出的程序基本架构，所以在认识游戏引擎整体架构时，还是需要参考前两者，而cherno的架构只是程序实现的思路框架。</p>
+<h1 id="开始搭建基础结构"><a href="#开始搭建基础结构" class="headerlink" title="开始搭建基础结构"></a>开始搭建基础结构</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p>整体项目分为两个子项目，一个为引擎本身，还有一个是调用引擎的App。这是由于引擎本身需要大量的依赖，所以将引擎整体作为一个项目，将生成好的依赖文件，供App使用。这样可以完成引擎架构和做游戏的应用与大量第三方库完成解耦，这里本文中的引擎项目起名XEngine，App项目起名DemoApp。</p>
+<p>这里给出Cherno的工程上的设计细节：</p>
+<p>他首先在Core.h文件中做了一个预编译宏处理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> XENGINE_PLATFORM_WINDOWS</span></span><br><span class="line">	<span class="meta">#<span class="keyword">ifdef</span> XENGINE_BUILD_DLL</span></span><br><span class="line">		<span class="meta">#<span class="keyword">define</span> XENGINE_API __declspec(dllexport)</span></span><br><span class="line">	<span class="meta">#<span class="keyword">else</span> </span></span><br><span class="line">		<span class="meta">#<span class="keyword">define</span> XENGINE_API __declspec(dllimport)</span></span><br><span class="line">	<span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">	<span class="meta">#<span class="keyword">error</span> XEngine only supports Windows now!</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>并且在每一个在App项目中调用的类的声明前，添加了XENGINE_API：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">XENGINE_API</span> classname &#123;</span><br><span class="line">    <span class="comment">// 类的声明</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>__declspec(dllexport)：表示编译后的dll允许该函数被外部调用</p>
+<p>__declspec(dllimport)：表示该函数的定义来源于外部dll</p>
+<p>这样可以显示声明和区别同一个头文件在引擎项目中和App项目中引用中，一个类导出&#x2F;导入的不同意义。</p>
+<p>其次，在引擎内部也定义一个应用类，来抽象和定义App项目中具体的App：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> XEngine &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">XENGINE_API</span> Application</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="built_in">Application</span>();</span><br><span class="line">		<span class="keyword">virtual</span> ~<span class="built_in">Application</span>();</span><br><span class="line">		<span class="function"><span class="type">static</span> Application&amp; <span class="title">Get</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> *s_Instance; &#125;</span><br><span class="line">		<span class="function">Window&amp; <span class="title">GetWindow</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> *m_Window; &#125;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">OnEvent</span><span class="params">(Event&amp; e)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">PushLayer</span><span class="params">(Layer* layer)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">PushOverlay</span><span class="params">(Layer* overlay)</span></span>;</span><br><span class="line">		<span class="function">ImGuiLayer* <span class="title">GetImGuiLayer</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_ImGuiLayer; &#125;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">Close</span><span class="params">()</span></span>;	</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="function"><span class="type">bool</span> <span class="title">OnWindowClose</span><span class="params">(WindowCloseEvent&amp; e)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">bool</span> <span class="title">OnWindowResize</span><span class="params">(WindowResizeEvent&amp; e)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">Run</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		Scope&lt;Window&gt; m_Window;</span><br><span class="line">		ImGuiLayer* m_ImGuiLayer;</span><br><span class="line">		<span class="type">bool</span> m_Running = <span class="literal">true</span>;</span><br><span class="line">		LayerStack m_LayerStack;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="type">static</span> Application* s_Instance;</span><br><span class="line">		<span class="keyword">friend</span> <span class="type">int</span> ::<span class="built_in">main</span>(<span class="type">int</span> argc, <span class="type">char</span>** argv);</span><br><span class="line">	&#125;;</span><br><span class="line">	<span class="comment">// To be defined in Client</span></span><br><span class="line">	<span class="function">Application* <span class="title">CreateApplication</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Entry-Point"><a href="#Entry-Point" class="headerlink" title="Entry Point"></a>Entry Point</h2><p>引擎的入口点，定义引擎初始化时需要做的工作，这里给出设计细节。</p>
+<p>首先以头文件的形式创建EntryPoint.h</p>
+<p><img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628160706429.png" alt="image-20230628160706429"></p>
+<p>并且在该头文件中定义main函数。</p>
+<img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedimage-20230628160805379.png" alt="image-20230628160805379" style="zoom: 67%;" />
+
+<p>这样在使用该引擎的App应用程序代码中，就可以直接包含该头文件，进而将<strong>EntryPoint的设计与使用分开</strong>：设计在引擎内部的Core中，使用在App中。</p>
+<p>虽然App类的定义和CreateApplication()的调用都在引擎内部，但是cherno将CreateApplication()的定义放在了App项目中，这样可以让使用引擎者在应用程序的初始化阶段自定义。（区别于引擎内部的自定义）</p>
+<h2 id="Logging-System"><a href="#Logging-System" class="headerlink" title="Logging System"></a>Logging System</h2><p>这里cherno使用的第三方库spdlog，git地址：<a target="_blank" rel="noopener" href="https://github.com/gabime/spdlog">https://github.com/gabime/spdlog</a></p>
+<p>为了让引擎使用起来更加统一，调用的时候不用额外再使用spdlog::，所以这里建立了一个自己的Log类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> XEngine &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">XENGINE_API</span> Log</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">Init</span><span class="params">()</span></span>;</span><br><span class="line">		<span class="function"><span class="type">static</span> Ref&lt;spdlog::logger&gt;&amp; <span class="title">GetCoreLogger</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> s_CoreLogger; &#125;</span><br><span class="line">		<span class="function"><span class="type">static</span> Ref&lt;spdlog::logger&gt;&amp; <span class="title">GetClientLogger</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> s_ClientLogger; &#125;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="comment">// logger for CoreEngine</span></span><br><span class="line">		<span class="type">static</span> Ref&lt;spdlog::logger&gt; s_CoreLogger;</span><br><span class="line">		<span class="comment">// logger for Client</span></span><br><span class="line">		<span class="type">static</span> Ref&lt;spdlog::logger&gt; s_ClientLogger;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Log类中包含了一个引擎的，一个App的，总之Log类的目的就是为了引擎使用Log系统时，可以隐去spdlog的印记，使得程序更加统一。</p>
+<h2 id="Event-System"><a href="#Event-System" class="headerlink" title="Event System"></a>Event System</h2><p>不同平台之间，不同的图形API实现，都会有着不一样的事件触发函数。为了能够将这些抽象起来，统一交由引擎处理，这里建立了一个Event System。</p>
+<p>首先这里建立了事件发生的类型和事件的整体的分类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum class</span> <span class="title class_">EventType</span></span><br><span class="line">	&#123;</span><br><span class="line">		None = <span class="number">0</span>,</span><br><span class="line">		WindowClose,</span><br><span class="line">		WindowResize,</span><br><span class="line">		WindowFocus,</span><br><span class="line">		WindowLostFocus,</span><br><span class="line">		WindowMoved,</span><br><span class="line">		AppTick,</span><br><span class="line">		AppUpdate,</span><br><span class="line">		AppRender,</span><br><span class="line">		KeyPressed,</span><br><span class="line">		KeyReleased,</span><br><span class="line">		KeyTyped,</span><br><span class="line">		MouseButtonPressed,</span><br><span class="line">		MouseButtonReleased,</span><br><span class="line">		MouseMoved,</span><br><span class="line">		MouseScrolled</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">enum</span> <span class="title class_">EventCategory</span></span><br><span class="line">	&#123;</span><br><span class="line">		None = <span class="number">0</span>,</span><br><span class="line">		EventCategoryApplication  = <span class="built_in">BIT</span>(<span class="number">0</span>),</span><br><span class="line">		EventCategoryInput        = <span class="built_in">BIT</span>(<span class="number">1</span>),</span><br><span class="line">		EventCategoryKeyboard     = <span class="built_in">BIT</span>(<span class="number">2</span>),</span><br><span class="line">		EventCategoryMouse        = <span class="built_in">BIT</span>(<span class="number">3</span>),</span><br><span class="line">		EventCategoryMouseButton  = <span class="built_in">BIT</span>(<span class="number">4</span>)</span><br><span class="line">	&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里不难看出EventCategory和EventType语义上比较重叠，仅仅是EventType比EventCategory更加细化。这里这样做的目的是为了<em>方便在程序运行逻辑上做出判断</em>。比如一个同样都是键盘按键的分类(Category)，不同的类型(Type)按下和释放，都需要对应精确的不同的事件响应，所以这时候用Type判断。但是都作为键盘事件分类，在某一些条件判断可以一概而论，所以这时候可以用Category判断。</p>
+<p>其次，定义了Event抽象类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">XENGINE_API</span> Event</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~<span class="built_in">Event</span>() = <span class="keyword">default</span>;</span><br><span class="line">    <span class="type">bool</span> Handled = <span class="literal">false</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> EventType <span class="title">GetEventType</span><span class="params">()</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">const</span> <span class="type">char</span>* <span class="title">GetName</span><span class="params">()</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">int</span> <span class="title">GetCategoryFlags</span><span class="params">()</span> <span class="type">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> std::string <span class="title">ToString</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> <span class="built_in">GetName</span>(); &#125;</span><br><span class="line">    <span class="function"><span class="keyword">inline</span> <span class="type">bool</span> <span class="title">IsInCategory</span><span class="params">(EventCategory category)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">GetCategoryFlags</span>() &amp; category;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>接着定义了一个Event的调度器：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">EventDispatcher</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">EventDispatcher</span>(Event&amp; event)</span><br><span class="line">        :<span class="built_in">m_Event</span>(event) &#123;&#125;</span><br><span class="line">    <span class="comment">// F will be deduced by the compiler</span></span><br><span class="line">    <span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> F&gt;</span></span><br><span class="line"><span class="function">    <span class="type">bool</span> <span class="title">Dispatch</span><span class="params">(<span class="type">const</span> F&amp; func)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (m_Event.<span class="built_in">GetEventType</span>() == T::<span class="built_in">GetStaticType</span>())</span><br><span class="line">        &#123;</span><br><span class="line">            m_Event.Handled |= <span class="built_in">func</span>(<span class="built_in">static_cast</span>&lt;T&amp;&gt;(m_Event));</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    Event&amp; m_Event;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里又是一个值得学习的C++泛型使用的工程细节，这里首先给出Dispatch实际调用的实例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> XENGINE_BIND_EVENT_FN(fn) [this](auto&amp;&amp;... args) -&gt; decltype(auto) &#123; return this-&gt;fn(std::forward<span class="string">&lt;decltype(args)&gt;</span>(args)...); &#125;</span></span><br><span class="line"><span class="function">EventDispatcher <span class="title">dispatcher</span><span class="params">(e)</span></span>;</span><br><span class="line">dispatcher.<span class="built_in">Dispatch</span>&lt;WindowCloseEvent&gt;(<span class="built_in">XENGINE_BIND_EVENT_FN</span>(Application::OnWindowClose));</span><br></pre></td></tr></table></figure>
+
+<p>首先宏定义了一个lambda表达式，[this]表示函数体内的可以使用Lambda所在类中的成员变量，auto&amp;&amp;可以接收任何的初始值设定，无论是左值还是右值，decltype(auto)表示取得表达式结果结果类型精确类型，std::forward&lt;decltype(args)&gt;(args)可以按照args参数的类型完美转发args作为fn函数的参数。整体用来显示提供了Dispatch中F的类型。</p>
+<p>最终效果就是将Application::OnWindowClose函数传入Dispatch函数中，并且将dispatcher中的m_Event，即dispatcher创建时的e作为参数传递给Application::OnWindowClose函数。</p>
+<p>中间还使用了m_Event.GetEventType() &#x3D;&#x3D; T::GetStaticType()，用于判断当前发生事件与函数内部实际事件是否一致，若一致执行传递进来的lambda表达式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Application::OnEvent</span><span class="params">(Event&amp; e)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">EventDispatcher <span class="title">dispatcher</span><span class="params">(e)</span></span>;</span><br><span class="line">    dispatcher.<span class="built_in">Dispatch</span>&lt;WindowCloseEvent&gt;(<span class="built_in">XENGINE_BIND_EVENT_FN</span>(Application::OnWindowClose));</span><br><span class="line">    dispatcher.<span class="built_in">Dispatch</span>&lt;WindowResizeEvent&gt;(<span class="built_in">XENGINE_BIND_EVENT_FN</span>(Application::OnWindowResize));</span><br><span class="line">    <span class="built_in">XENGINE_CORE_TRACE</span>(<span class="string">&quot;&#123;0&#125;&quot;</span>, e);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> it = m_LayerStack.<span class="built_in">rbegin</span>(); it != m_LayerStack.<span class="built_in">rend</span>(); ++it)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.Handled)</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        (*it)-&gt;<span class="built_in">OnEvent</span>(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里将OnEvent的函数利用std::function包装绑定到了EventCallback上，而当每次不同驱动API实际的回调函数发生时，例如下面：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">glfwSetWindowCloseCallback</span>(m_Window, [](GLFWwindow* window)</span><br><span class="line">&#123;</span><br><span class="line">    WindowData&amp; data = *(WindowData*)<span class="built_in">glfwGetWindowUserPointer</span>(window);</span><br><span class="line">    WindowCloseEvent event;</span><br><span class="line">    data.<span class="built_in">EventCallback</span>(event);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这样将当前事件的传入OnEvent函数中，并通过任务调度器去判断，并下放到各个层(下一节的概念)中</p>
+<h2 id="Layer"><a href="#Layer" class="headerlink" title="Layer"></a>Layer</h2><p>对于一个事件的响应，我们需要一个层级的概念去分层响应它，针对渲染，编辑界面、命令等事件，设定给每个层一个抽象独立的概念。</p>
+<p>首先定义了Layer类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> XEngine &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">XENGINE_API</span> Layer</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="built_in">Layer</span>(<span class="type">const</span> std::string&amp; name = <span class="string">&quot;Layer&quot;</span>);</span><br><span class="line">		<span class="keyword">virtual</span> ~<span class="built_in">Layer</span>();</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnAttach</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnDetach</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnUpdate</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnImGuiRender</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnEvent</span><span class="params">(Event&amp; event)</span> </span>&#123;&#125;</span><br><span class="line">		<span class="function"><span class="keyword">inline</span> <span class="type">const</span> std::string&amp; <span class="title">GetName</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> m_DebugName; &#125;</span><br><span class="line">	<span class="keyword">protected</span>:</span><br><span class="line">		std::string m_DebugName;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其次定义了一个LayerStack类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> XEngine &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">XENGINE_API</span> LayerStack</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="built_in">LayerStack</span>() = <span class="keyword">default</span>;</span><br><span class="line">		~<span class="built_in">LayerStack</span>();</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">PushLayer</span><span class="params">(Layer* layer)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">PushOverlay</span><span class="params">(Layer* overlay)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">PopLayer</span><span class="params">(Layer* layer)</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">PopOverlay</span><span class="params">(Layer* overlay)</span></span>;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">iterator <span class="title">begin</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">begin</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">iterator <span class="title">end</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">end</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">reverse_iterator <span class="title">rbegin</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">rbegin</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">reverse_iterator <span class="title">rend</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">rend</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">const_iterator <span class="title">begin</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">begin</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">const_iterator <span class="title">end</span><span class="params">()</span>	<span class="type">const</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">end</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">const_reverse_iterator <span class="title">rbegin</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">rbegin</span>(); &#125;</span><br><span class="line">		std::vector&lt;Layer*&gt;::<span class="function">const_reverse_iterator <span class="title">rend</span><span class="params">()</span> <span class="type">const</span> </span>&#123; <span class="keyword">return</span> m_Layers.<span class="built_in">rend</span>(); &#125;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="comment">// real dataStruct is not stack, because it need iterate on update</span></span><br><span class="line">		<span class="comment">// we need contiguous data storage	</span></span><br><span class="line">		<span class="comment">// Render Order--&gt;                  &lt;--Event Order</span></span><br><span class="line">		<span class="comment">// (begin,               ...                  ,end)</span></span><br><span class="line">		std::vector&lt;Layer*&gt; m_Layers;</span><br><span class="line">		<span class="type">unsigned</span> <span class="type">int</span> m_LayerInsertIndex = <span class="number">0</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之所以定义LayerStack，是因为一个事件命令传入给各个层，应该是按照顺序依次进行的，同时渲染的顺序也应该按照层级一步步进行，而与此同时命令的响应顺序和渲染的顺序应该是相反的，比如事件先经过UI层响应，在传递给游戏功能层，而渲染则是先渲染游戏场景，再渲染UI。</p>
+<p>这里cherno的LayerStack内部维护的数据结构实际上是一个vector，之所以这样做是因为，Layer使用起来像是一个栈的结构，但是实际过程需要来回的迭代并更新，vector实现起来更方便一些。</p>
+<p>而Layer的具体实例在上面Application::OnEvent有所展示，一个事件会依次迭代各个层，并响应事件。</p>
+<h2 id="ImGui"><a href="#ImGui" class="headerlink" title="ImGui"></a>ImGui</h2><p>这一节主要是引入了ImGui作为整体引擎的ui界面，这里结合Layer系统讲。</p>
+<p>首先按照Layer的概念创建了ImGuiLayer：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> XEngine &#123;</span><br><span class="line">	<span class="keyword">class</span> <span class="title class_">XENGINE_API</span> ImGuiLayer : <span class="keyword">public</span> Layer</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">public</span>:</span><br><span class="line">		<span class="built_in">ImGuiLayer</span>();</span><br><span class="line">		~<span class="built_in">ImGuiLayer</span>();</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnAttach</span><span class="params">()</span> <span class="keyword">override</span></span>;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnDetach</span><span class="params">()</span> <span class="keyword">override</span></span>;</span><br><span class="line">		<span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">OnImGuiRender</span><span class="params">()</span> <span class="keyword">override</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">Begin</span><span class="params">()</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">End</span><span class="params">()</span></span>;</span><br><span class="line">		<span class="function"><span class="type">void</span> <span class="title">SetDarkThemeColors</span><span class="params">()</span></span>;</span><br><span class="line">		<span class="function"><span class="type">uint32_t</span> <span class="title">GetActiveWidgetID</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">		<span class="type">bool</span> m_BlockEvents = <span class="literal">true</span>;</span><br><span class="line">		<span class="type">float</span> m_Time = <span class="number">0.0f</span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并在Application创建之初将ImGuiLayer放入LayerStack的尾端，即渲染的最后一层，事件响应的第一层。</p>
+<p>而这里值得注意的是Layer类中就已经定义了void OnImGuiRender()的接口，这个是因为所有层，如果有渲染功能的需要的话，我们还是希望作为ImGui的窗口的一部分中去渲染，这样在引擎中方便UI布局，整个界面看起来更加整齐划一，而作为事件响应ImGui还是充当UI按钮的位置，作为事件响应的第一层。</p>
+<p>对于事件的响应从Application::OnEvent的代码实现中可以看出，总是从LayerStack的末尾去开始迭代，所以总是ImGui去第一个响应事件</p>
+<p>对于渲染顺序来说，在主体循环可以看到：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (m_Running)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//以上省略</span></span><br><span class="line">    m_ImGuiLayer-&gt;<span class="built_in">Begin</span>();</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (Layer* layer : m_LayerStack)</span><br><span class="line">            layer-&gt;<span class="built_in">OnImGuiRender</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    m_ImGuiLayer-&gt;<span class="built_in">End</span>();</span><br><span class="line">	<span class="comment">//以下省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>渲染顺序从LayerStack的开端开始迭代，最后渲染ImGuiLayer。</p>
+<p>这里给出Begin()和End()的具体实现，类似ImGui的固定用法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">ImGuiLayer::Begin</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">ImGui_ImplOpenGL3_NewFrame</span>();</span><br><span class="line">    <span class="built_in">ImGui_ImplGlfw_NewFrame</span>();</span><br><span class="line">    ImGui::<span class="built_in">NewFrame</span>();</span><br><span class="line">    <span class="comment">//ImGuizmo::BeginFrame();</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">ImGuiLayer::End</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ImGuiIO&amp; io = ImGui::<span class="built_in">GetIO</span>();</span><br><span class="line">    Application&amp; app = Application::<span class="built_in">Get</span>();</span><br><span class="line">    io.DisplaySize = <span class="built_in">ImVec2</span>((<span class="type">float</span>)app.<span class="built_in">GetWindow</span>().<span class="built_in">GetWidth</span>(), (<span class="type">float</span>)app.<span class="built_in">GetWindow</span>().<span class="built_in">GetHeight</span>());</span><br><span class="line">    <span class="comment">// Rendering</span></span><br><span class="line">    ImGui::<span class="built_in">Render</span>();</span><br><span class="line">    <span class="built_in">ImGui_ImplOpenGL3_RenderDrawData</span>(ImGui::<span class="built_in">GetDrawData</span>());</span><br><span class="line">    <span class="keyword">if</span> (io.ConfigFlags &amp; ImGuiConfigFlags_ViewportsEnable)</span><br><span class="line">    &#123;</span><br><span class="line">        GLFWwindow* backup_current_context = <span class="built_in">glfwGetCurrentContext</span>();</span><br><span class="line">        ImGui::<span class="built_in">UpdatePlatformWindows</span>();</span><br><span class="line">        ImGui::<span class="built_in">RenderPlatformWindowsDefault</span>();</span><br><span class="line">        <span class="built_in">glfwMakeContextCurrent</span>(backup_current_context);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h1><p>这里只梳理整体引擎的基本概念和基础框架的程序构建，其中少了渲染和窗口的部分，这一部分我想作为之后跨平台和渲染抽象的部分一起总结。其次对于基础框架的梳理，我只整理了我自认为是骨干的部分，许多细节并没有展示出来，我认为这些细节是作为骨干部分的衍生和补充，而紧紧握住骨干，才能让自己对于整个庞大的系统更加的清晰和掌握。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://mi1klyt.com">YunTao Li</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://mi1klyt.com/XEngine/">http://mi1klyt.com/XEngine/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://mi1klyt.com" target="_blank">mi1k Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C/">C++</a><a class="post-meta__tags" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/">游戏引擎</a><a class="post-meta__tags" href="/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/">图形学</a></div><div class="post_share"><div class="social-share" data-image="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedengine.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/ImGui/" title="ImGui笔记"><img class="cover" src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedv167-misc.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">ImGui笔记</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/ImGui/" title="ImGui笔记"><img class="cover" src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedv167-misc.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-12-23</div><div class="title">ImGui笔记</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedavatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YunTao Li</div><div class="author-info__description">北京邮电大学 - 计算机图形学、光场立体渲染、三维显示</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/mi1k-lyt"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E6%93%8E%E7%9A%84%E6%A1%86%E6%9E%B6%E5%92%8C%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">引擎的框架和定义</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.</span> <span class="toc-text">游戏引擎的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E%E7%9A%84%E7%A8%8B%E5%BA%8F%E6%A1%86%E6%9E%B6"><span class="toc-number">1.2.</span> <span class="toc-text">设计游戏引擎的程序框架</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">开始搭建基础结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">项目结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Entry-Point"><span class="toc-number">2.2.</span> <span class="toc-text">Entry Point</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Logging-System"><span class="toc-number">2.3.</span> <span class="toc-text">Logging System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Event-System"><span class="toc-number">2.4.</span> <span class="toc-text">Event System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Layer"><span class="toc-number">2.5.</span> <span class="toc-text">Layer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ImGui"><span class="toc-number">2.6.</span> <span class="toc-text">ImGui</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%93%E5%B0%BE"><span class="toc-number">3.</span> <span class="toc-text">结尾</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/XEngine/" title="游戏引擎从零开发(一)"><img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedengine.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="游戏引擎从零开发(一)"/></a><div class="content"><a class="title" href="/XEngine/" title="游戏引擎从零开发(一)">游戏引擎从零开发(一)</a><time datetime="2023-03-28T06:53:01.000Z" title="发表于 2023-03-28 14:53:01">2023-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/ImGui/" title="ImGui笔记"><img src="https://mi1k-bucket.oss-cn-beijing.aliyuncs.com/undefinedv167-misc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ImGui笔记"/></a><div class="content"><a class="title" href="/ImGui/" title="ImGui笔记">ImGui笔记</a><time datetime="2022-12-23T11:26:30.000Z" title="发表于 2022-12-23 19:26:30">2022-12-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By YunTao Li</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><script>(()=>{
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: 'https://mi1k-blog-twikoo.vercel.app/',
+      region: 'ap-shanghai',
+      onCommentLoaded: function () {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      }
+    }, null))
+  }
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://mi1k-blog-twikoo.vercel.app/',
+      region: 'ap-shanghai',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(function (res) {
+      countELement.textContent = res[0].count
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  const runFn = () => {
+    init()
+    
+  }
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') {
+      setTimeout(runFn,0)
+      return
+    } 
+    getScript('/pluginsSrc/twikoo/dist/twikoo.all.min.js').then(runFn)
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = () => {
+      loadTwikoo()
+    }
+  }
+})()</script></div><script data-pjax defer src="/js/my.js"></script><canvas class="fireworks" mobile="false"></canvas><script src="/pluginsSrc/butterfly-extsrc/dist/fireworks.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="/pluginsSrc/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
